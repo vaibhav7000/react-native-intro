@@ -4,7 +4,9 @@ import { View, Platform, Text, Button, TextInput, SectionList, StyleSheet } from
 
 const PlatformComponent = Platform.select({
     'ios': () => {
-        return () => <Text>IOS</Text>
+        return () => <Text style={{
+
+        }}>IOS</Text>
     },
     'android': () => {
         return () => <Text>Android</Text>
