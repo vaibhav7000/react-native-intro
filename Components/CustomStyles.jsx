@@ -61,6 +61,14 @@ export default CustomStyles;
 
     We can also use height and width with percentages to provide
 
+    flexGrow, flexShrink and flexBasis -> all these properties are related to the Size of the Component accross the main Axis
 
+    flexBasis -> provides the default size to the Component then It might changed based on the flexGrow and flexShrink value provided to the container
+
+    flexGrow and flexShrink -> Both these have default value = 0 means they will not grow and shrink 
+
+    flexWrap -> this property allows the Component to wrap across the main axis if the content Overflows accross the main axis
+
+    flexGrow and flexShrink -> Using these properties we can change the dimensions across the main axis axis even if we have provided height and widht with fixed values
 
 */

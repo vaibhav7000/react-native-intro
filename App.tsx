@@ -20,14 +20,21 @@ import CustomScroll from './Components/CustomScroll';
 import CustomFlat from './Components/CustomFlat';
 import CustomSection from './Components/SectionList';
 import CustomPlatform from './Components/Platform';
+import CustomStyles from './Components/CustomStyles';
+import FlexDirection from './Components/FlexDirection';
+import AlignItems from './Components/AlignItems';
+import CustomFlexWrap from './Components/FlexWrap';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider style={{
+      backgroundColor: "pink"
+    }}>
       <SafeAreaView style={{
-        flex: 1,
+        backgroundColor: "green",
+        flex: 1
       }} edges={['bottom', 'left', 'right', 'top']}>
         <AppContent />
       </SafeAreaView>
@@ -37,12 +44,23 @@ function App() {
 
 function AppContent() {
   return (
-    <View style={styles.container}>
+    <View style={{
+      backgroundColor: "red",
+      flex: 1
+    }}>
       {/* <CustomScroll/> */}
       {/* <CustomFlat/> */}
       {/* <CustomSection/> */}
 
-      <CustomPlatform/>
+      {/* <CustomPlatform/> */}
+
+      {/* <CustomStyles/> */}
+
+      {/* <FlexDirection/> */}
+
+      <CustomFlexWrap/>
+
+      {/* <AlignItems/> */}
     </View>
   );
 }
