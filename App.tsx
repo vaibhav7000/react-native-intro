@@ -24,6 +24,11 @@ import CustomStyles from './Components/CustomStyles';
 import FlexDirection from './Components/FlexDirection';
 import AlignItems from './Components/AlignItems';
 import CustomFlexWrap from './Components/FlexWrap';
+import UserInteractions from './Components/UserInteractions';
+import CustomIndicator from './Components/CustomActivityIndicator';
+import { PlatformProvider } from './Context/Store';
+import CustomButton from './Components/CustomButton';
+import CustomFlatList from './Components/CustomFlatList';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -36,7 +41,9 @@ function App() {
         backgroundColor: "green",
         flex: 1
       }} edges={['bottom', 'left', 'right', 'top']}>
-        <AppContent />
+        <PlatformProvider>
+          <AppContent />
+        </PlatformProvider>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -58,9 +65,17 @@ function AppContent() {
 
       {/* <FlexDirection/> */}
 
-      <CustomFlexWrap/>
+      {/* <CustomFlexWrap/> */}
 
       {/* <AlignItems/> */}
+
+      {/* <UserInteractions/> */}
+
+      {/* <CustomIndicator/>
+
+      <CustomButton/> */}
+
+      <CustomFlatList/>
     </View>
   );
 }
