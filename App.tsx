@@ -29,6 +29,7 @@ import CustomIndicator from './Components/CustomActivityIndicator';
 import { PlatformProvider } from './Context/Store';
 import CustomButton from './Components/CustomButton';
 import CustomFlatList from './Components/CustomFlatList';
+import CustomImage from './Components/CustomImages';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -75,7 +76,9 @@ function AppContent() {
 
       <CustomButton/> */}
 
-      <CustomFlatList/>
+      {/* <CustomFlatList/> */}
+
+      <CustomImage/>
     </View>
   );
 }
