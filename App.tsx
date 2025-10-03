@@ -30,6 +30,7 @@ import { PlatformProvider } from './Context/Store';
 import CustomButton from './Components/CustomButton';
 import CustomFlatList from './Components/CustomFlatList';
 import CustomImage from './Components/CustomImages';
+import ShoppingCart from './Components/Storage';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -78,7 +79,11 @@ function AppContent() {
 
       {/* <CustomFlatList/> */}
 
-      <CustomImage/>
+      {/* <CustomImage/> */}
+
+      {/* <Storage/> */}
+
+      <ShoppingCart/>
     </View>
   );
 }
