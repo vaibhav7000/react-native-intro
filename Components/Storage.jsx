@@ -111,6 +111,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStaticNavigation, NavigationContainer, useNavigation } from "@react-navigation/native";
 import { Button, Text, View } from "react-native";
+import { useEffect } from "react";
 
 
 const Home = () => {
@@ -149,6 +150,10 @@ const Me = () => {
 
 const Navigation = () => {
     const Stack = createNativeStackNavigator();
+
+    useEffect(() => {
+        console.log("Hello");
+    })
 
     return (
         <NavigationContainer>

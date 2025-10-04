@@ -31,6 +31,8 @@ import CustomButton from './Components/CustomButton';
 import CustomFlatList from './Components/CustomFlatList';
 import CustomImage from './Components/CustomImages';
 import ShoppingCart from './Components/Storage';
+import MyImage from './Components/MyImage';
+import MyFlatList from './Components/MyFlatList';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
@@ -83,7 +85,9 @@ function AppContent() {
 
       {/* <Storage/> */}
 
-      <ShoppingCart/>
+      {/* <MyImage /> */}
+
+      <MyFlatList/>
     </View>
   );
 }
