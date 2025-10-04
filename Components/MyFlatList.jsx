@@ -1,31 +1,94 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Text, View, FlatList, Button, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Text, View, FlatList, Button, TouchableOpacity, ActivityIndicator, Dimensions } from "react-native";
 
 const MyFlatList = props => {
 
     const [data, setData] = useState([]);
 
-    const fakerAPI = useCallback(() => {
-        setTimeout(function () {
-            const data = [{
-                id: 'orange',
-                fruitName: 'orange'
-            }, {
-                id: 'Apple',
-                fruitName: 'Apple'
-            }, {
-                id: 'Banana',
-                fruitName: 'Banana'
-            }]
+    const [refresh, setRefresh] = useState(false);
 
-            setData(old => [...old, {
-                id: 'Grapes',
-                fruitName: 'Grapes'
-            }, ...data])
+    const flatListRef = useRef();
+
+    const firstTimeLoad = useRef(true);
+
+
+    const dimensionData = useMemo(() => {
+        const widthWindow = Dimensions.get('window').width;
+        const heightWindow = Dimensions.get('window').height;
+
+        return {
+            height: heightWindow,
+            width: widthWindow
+        }
+    }, []);
+
+    const singleItemSize = useMemo(function () {
+        return 100;
+    }, [])
+
+    const initialNumToRender = useMemo(function () {
+        return Math.floor(( Math.floor(dimensionData.height - 100) ) / ( singleItemSize + 10 ));
+    }, [])
+
+
+    const fakerAPI = useCallback(() => {
+        if(!firstTimeLoad.current) {
+            setRefresh(true);
+        } else {
+            firstTimeLoad.current = false;
+        }
+        setTimeout(function () {
+            const fruitList = [
+                'Apple', 'Banana', 'Orange', 'Mango', 'Pineapple',
+                'Grapes', 'Strawberry', 'Peach', 'Watermelon', 'Kiwi',
+                'Papaya', 'Blueberry', 'Cherry', 'Lemon', 'Lime',
+                'Coconut', 'Avocado', 'Pear', 'Plum', 'Fig'
+            ];
+
+            const data = [];
+
+            for (let i = 0; i < 20; i++) {
+                const fruit = fruitList[Math.floor(Math.random() * fruitList.length)];
+                data.push({
+                    id: fruit.toLowerCase() + '_' + i,  // ensure uniqueness
+                    fruitName: fruit
+                });
+            }
+
+            setData(old => [...data])
+            setRefresh(false);
         }, 1 * 1000);
     })
 
     useEffect(fakerAPI, []);
+
+    useEffect(function() {
+
+        setInterval(function() {
+            if(flatListRef.current) {
+                flatListRef.current.flashScrollIndicators()
+            }
+        }, 2 * 1000)
+    });
+
+    const scrollToEnd = useCallback(function() {
+        if(flatListRef.current) {
+            flatListRef.current.scrollToEnd({
+                animated: true
+            })
+        }
+    }, []);
+
+    const scrollToLastIndex = useCallback(function() {
+        if(flatListRef.current) {
+            flatListRef.current.scrollToIndex({
+                index: Math.floor(data.length / 2),
+                animated: true,
+                viewPosition: 1,
+            })
+        }
+    }, [data]);
+
 
     return (
         <View style={{
@@ -33,9 +96,13 @@ const MyFlatList = props => {
         }}>
 
             <FlatList
+                ref={ref => {
+                    flatListRef.current = ref
+                }}
                 bounces={true}
                 contentContainerStyle={{
                     backgroundColor: 'white',
+                    flex: firstTimeLoad.current ? 1 : 0
                 }}
                 data={data}
                 ItemSeparatorComponent={MySeparatorComponent} // can be React Element or React Component
@@ -44,21 +111,50 @@ const MyFlatList = props => {
                     <RenderItem fruitName={item.fruitName} index={index} separators={separators} />
                 )}
                 ListEmptyComponent={EmptyComponent}
-                ListFooterComponent={FooterComponent}
+                ListFooterComponent={!firstTimeLoad.current && FooterComponent}
                 ListFooterComponentStyle={{
                     paddingTop: 20,
                     paddingBottom: 20,
-                    marginTop: 30,
+                    height: 60,
                     backgroundColor: 'orange',
                 }}
-                ListHeaderComponent={HeaderComponent}
+                ListHeaderComponent={!firstTimeLoad.current && HeaderComponent}
                 ListHeaderComponentStyle={{
-                    marginBottom: 30,
                     paddingTop: 20,
                     paddingBottom: 20,
+                    height: 60,
                     backgroundColor: 'orange'
                 }}
+
+                // numColumns={1}
+                // columnWrapperStyle={{
+                //     justifyContent: 'space-evenly',
+                // }}
+
+                // getItemLayout={(data, index) => {
+                //     return {
+                //         length: 100,
+                //         offset: (100 + 10) * index,
+                //         index 
+                //     }
+                // }}
+
+                // initialNumToRender={initialNumToRender}
+
+                refreshing={refresh}
+                onRefresh={fakerAPI}
+
             />
+
+            <TouchableOpacity onPress={scrollToEnd}>
+                <Text>Move to Bottom</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => {
+                scrollToLastIndex()
+            }}>
+                <Text>Move to Last Index</Text>
+            </TouchableOpacity>
 
         </View>
     )
@@ -70,12 +166,6 @@ export default MyFlatList;
 
 // by-default highlighted and leadingItem props are provided
 const MySeparatorComponent = ({ highlighted, leadingItem, style = {} }) => {
-
-    console.log(highlighted);
-
-    console.log(style);
-
-    console.log(leadingItem);
 
     return <View style={{
         backgroundColor: highlighted ? 'orange' : 'aquamarine',
@@ -92,25 +182,35 @@ const RenderItem = ({ fruitName, index, separators }) => {
 
     return <View style={{
         padding: 20,
-        backgroundColor: 'skyblue'
+        height: 100,
+        backgroundColor: 'skyblue',
+        flexDirection: 'row',
     }}>
         <TouchableOpacity style={{
-            backgroundColor: 'pink'
+            backgroundColor: 'pink',
+            flex: 1,
+            justifyContent: 'center'
         }} onPressIn={() => {
             highlight()
-            updateProps('leading', {
-                style: {
-                    height: 100,
-                    borderWidth: 10
-                }
-            })
+
+            if (index > 1) {
+                updateProps('trailing', {
+                    style: {
+                        height: 100,
+                        borderWidth: 10
+                    }
+                })
+            }
         }} onPressOut={() => {
             unhighlight()
-            updateProps('leading', {
-                style: {
+            if (index > 1) {
+                updateProps('trailing', {
+                    style: {
 
-                }
-            })
+                    }
+                })
+            }
+
         }}>
 
             <Text>
@@ -131,7 +231,7 @@ const EmptyComponent = () => {
             alignItems: 'center',
             justifyContent: 'center'
         }}>
-            <ActivityIndicator animating={true} size={"large"} hidesWhenStopped={true} color={'red'} />
+            <ActivityIndicator animating={true} size={"small"} hidesWhenStopped={true} color={'red'} />
         </View>
     )
 }
@@ -182,6 +282,13 @@ const HeaderComponent = () => {
 
     The ItemSeparatorComponent gets updated in a optimized way, it will be updated when the we update using separators.hightlight or separators.unhighlight or more Generic using separators.updateProps
 
+    When dealing with numColumns of FlatList if > 1 than more than 1 items share the same ItemSeparatorComponent
+
+    "extraData" prop help to re-render the FlatList when anything else from data gets changed => if FlatList depends on any other state variable else then the data then we need to mention that in the extraData
+
+    "intialNumToRender" -> using this prop we specify how many items we want to by-default render on the screen, these items always stays in the memory should be as many as that can be rendered on the screen
+
+    FlatList always calculates the height (when horizontal={false}) or width( when horizontal={true} ) of items that are render using renderItem, but when specifying the "getItemLayout" prop it skips that calculation of the height or width, this does not inforces the items to follow that height or width, but itself skips that calculation and belives on the user specific value
 
     TouchableOpacity PressEvent -> onPressIn -> onPressout -> onPress 
 
